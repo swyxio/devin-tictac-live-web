@@ -1,0 +1,53 @@
+<.header>
+  Tic-Tac-Toe Game
+  <:actions>
+    <.link patch={~p"/boards/new"}>
+      <.button>New Game</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<div class="board">
+  <%= for {row_index, row_value} <- @board.board_state do %>
+    <div class="board-row">
+      <%= for {col_index, cell_value} <- row_value do %>
+        <div class="board-cell" phx-click="mark" phx-value-row={row_index} phx-value-col={col_index}>
+          <%= cell_value || "" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<.modal :if={@live_action in [:new, :edit]} id="board-modal" show on_cancel={JS.patch(~p"/boards")}>
+  <.live_component
+    module={TictacLiveWeb.BoardLive.FormComponent}
+    id={@board.id || :new}
+    title={@page_title}
+    action={@live_action}
+    board={@board}
+    patch={~p"/boards"}
+  />
+</.modal>
+
+<style>
+  .board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .board-row {
+    display: contents;
+  }
+  .board-cell {
+    width: 60px;
+    height: 60px;
+    background-color: #fff;
+    border: 1px solid #999;
+    padding: 0;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 60px;
+    text-align: center;
+  }
+</style>
